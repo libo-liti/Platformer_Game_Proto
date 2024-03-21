@@ -4,33 +4,41 @@ using UnityEngine;
 
 public class NPC : MonoBehaviour
 {
-    [SerializeField]
-    Camera ccamera;
+    GameObject UICanvas;
+    Player player;
+    public int id;
+    void Start()
+    {
+        UICanvas = transform.GetChild(0).gameObject;
+        player = GameObject.Find("Player").GetComponent<Player>();
+    }
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player")
         {
-            transform.GetChild(0).gameObject.SetActive(true);
-            GameObject.Find("Player").GetComponent<Player>().canInteraction = true;
+            UICanvas.SetActive(true);
+            player.canInteraction = true;
+            player.coliider = gameObject;
         }
     }
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.tag == "Player")
         {
+            // Look at the player
             if (transform.position.x - other.transform.position.x < 0)
                 transform.localScale = new Vector3(1, 1, 1);
             else
                 transform.localScale = new Vector3(-1, 1, 1);
-            transform.GetChild(0).transform.GetChild(0).transform.position = ccamera.WorldToScreenPoint(transform.position);
         }
     }
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.tag == "Player")
         {
-            transform.GetChild(0).gameObject.SetActive(false);
-            GameObject.Find("Player").GetComponent<Player>().canInteraction = false;
+            UICanvas.SetActive(false);
+            player.canInteraction = false;
+            player.coliider = null;
         }
     }
 }

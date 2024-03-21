@@ -15,8 +15,10 @@ public class Player : MonoBehaviour
     Animator anime;
     BoxCollider2D boxcollider;
     Camera mapCam;
+    DialogueManager dialogue;
     GameObject mainCamera;
     GameObject mapCamera;
+    public GameObject coliider;
     Rigidbody2D rig;
     Vector3 firstMousePos;
     Vector3 move;
@@ -43,24 +45,25 @@ public class Player : MonoBehaviour
     }
     void Start()
     {
+        dialogue = GameObject.Find("DialogueManager").GetComponent<DialogueManager>();
         mainCamera = transform.GetChild(0).gameObject;
         mapCamera = transform.GetChild(1).gameObject;
         mapCam = mapCamera.GetComponent<Camera>();
     }
     void FixedUpdate()
     {
-        if (status == Play)
-            PlayerMove();
+
     }
     void Update()
     {
         Status();
     }
-    void Status()
+    void Status()       // Player's status
     {
         switch (status)
         {
             case Play:
+                PlayerMove();
                 Interaction_Check();
                 Map_Check();
                 break;
@@ -85,13 +88,13 @@ public class Player : MonoBehaviour
             transform.localScale = new Vector3(-1f, 1f, 1f);
 
         // Run Animation Trigger
-        if (Math.Abs(move.x) >= 0.1f)
+        if (Math.Abs(move.x) >= 0.01f)
             anime.SetFloat("MoveSpeed", Math.Abs(move.x));
         else
             anime.SetFloat("MoveSpeed", 0);
 
         // Jump Animation Trigger
-        anime.SetBool("IsGround", Mathf.Abs(rig.velocity.y) <= 0.1f);
+        anime.SetBool("IsGround", IsGrounded());
         if (Mathf.Abs(rig.velocity.y) > 0.1f) anime.SetFloat("JumpBlend", rig.velocity.normalized.y);
         if (Input.GetKeyDown(KeyCode.Space))
             if (IsGrounded())
@@ -104,12 +107,17 @@ public class Player : MonoBehaviour
             {
                 status = Interaction;
                 move.x = 0;
+                dialogue.Action(coliider);
             }
     }
     void Interaction_Active()
     {
         if (Input.GetKeyDown(KeyCode.E))
-            status = Play;
+        {
+            dialogue.Action(coliider);
+            if (dialogue.isActive == false)
+                status = Play;
+        }
     }
     void Map_Check()
     {
@@ -134,7 +142,7 @@ public class Player : MonoBehaviour
             firstMousePos = Input.mousePosition;
         if (Input.GetMouseButton(0))
         {
-            mapCamera.transform.position -= (Input.mousePosition - firstMousePos) * Time.deltaTime;
+            mapCamera.transform.position -= (Input.mousePosition - firstMousePos) * Time.deltaTime * mapMoveSpeed;
             firstMousePos = Input.mousePosition;
         }
 
