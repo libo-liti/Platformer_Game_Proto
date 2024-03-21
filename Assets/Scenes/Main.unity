@@ -318,6 +318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8bf4457fcef17543a48c211aa7c03b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coliider: {fileID: 0}
   canInteraction: 0
 --- !u!1 &218791015
 GameObject:
@@ -461,7 +462,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: e3265ab4bf004d28a9537516768c1c75, type: 3}
+    m_Font: {fileID: 12800000, guid: 2387b29c33dc58f46954d05768afe6c0, type: 3}
     m_FontSize: 20
     m_FontStyle: 0
     m_BestFit: 0
@@ -528,7 +529,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   text: {fileID: 270565779}
   bubble: {fileID: 1483607932}
-  talkIndex: 0
+  dialogueIndex: 0
+  isActive: 0
 --- !u!4 &516861411 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5570629649847888802, guid: 59ced41400353f94a9539d848b162eff, type: 3}
