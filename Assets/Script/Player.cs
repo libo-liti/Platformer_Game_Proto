@@ -109,6 +109,14 @@ public class Player : MonoBehaviour
                 move.x = 0;
                 dialogue.Action(coliider);
             }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            if (dialogue.language == "korea")
+                dialogue.language = "english";
+            else
+                dialogue.language = "korea";
+            dialogue.InsertDialogue();
+        }
     }
     void Interaction_Active()
     {

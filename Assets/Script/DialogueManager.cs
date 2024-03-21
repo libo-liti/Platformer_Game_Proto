@@ -17,10 +17,12 @@ public class DialogueManager : MonoBehaviour
     List<object> maskDialogue;
     List<object> pinkDialogue;
     List<object> virtualDialogue;
+    public string language;
     public int dialogueIndex;
     public bool isActive = false;
     void Awake()
     {
+        language = "english";
         maskDialogue = new List<object>();
         pinkDialogue = new List<object>();
         virtualDialogue = new List<object>();
@@ -30,21 +32,49 @@ public class DialogueManager : MonoBehaviour
         data = CSVReader.Read("csvTest");
         InsertDialogue();
     }
-    void InsertDialogue()
+    public void InsertDialogue()
     {
-        for (int i = 0; i < data.Count; i++)
+        maskDialogue.Clear();
+        pinkDialogue.Clear();
+        virtualDialogue.Clear();
+        if (language == "korea")
         {
-            switch (data[i]["id"])
+            for (int i = 0; i < data.Count; i++)
             {
-                case Mask:
-                    maskDialogue.Add(data[i]["text"]);
-                    break;
-                case Pink:
-                    pinkDialogue.Add(data[i]["text"]);
-                    break;
-                case Virtual:
-                    virtualDialogue.Add(data[i]["text"]);
-                    break;
+                if ($"{data[i]["language"]}" != "korea")
+                    continue;
+                switch (data[i]["id"])
+                {
+                    case Mask:
+                        maskDialogue.Add(data[i]["text"]);
+                        break;
+                    case Pink:
+                        pinkDialogue.Add(data[i]["text"]);
+                        break;
+                    case Virtual:
+                        virtualDialogue.Add(data[i]["text"]);
+                        break;
+                }
+            }
+        }
+        else if (language == "english")
+        {
+            for (int i = 0; i < data.Count; i++)
+            {
+                if ($"{data[i]["language"]}" != "english")
+                    continue;
+                switch (data[i]["id"])
+                {
+                    case Mask:
+                        maskDialogue.Add(data[i]["text"]);
+                        break;
+                    case Pink:
+                        pinkDialogue.Add(data[i]["text"]);
+                        break;
+                    case Virtual:
+                        virtualDialogue.Add(data[i]["text"]);
+                        break;
+                }
             }
         }
     }
