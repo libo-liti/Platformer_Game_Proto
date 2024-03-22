@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.FullSerializer;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
 using UnityEngine.UIElements;
@@ -12,13 +11,17 @@ public class Player : MonoBehaviour
     const int Play = 1;
     const int Interaction = 2;
     const int Map = 3;
+    const int Collection = 4;
     Animator anime;
     BoxCollider2D boxcollider;
     Camera mapCam;
+    CollectionManager collection;
     DialogueManager dialogue;
     GameObject mainCamera;
     GameObject mapCamera;
-    public GameObject coliider;
+    public GameObject bubble;
+    public GameObject colliderObj;
+    public GameObject CollectionPanel;
     Rigidbody2D rig;
     Vector3 firstMousePos;
     Vector3 move;
@@ -45,6 +48,7 @@ public class Player : MonoBehaviour
     }
     void Start()
     {
+        collection = GameObject.Find("CollectionManager").GetComponent<CollectionManager>();
         dialogue = GameObject.Find("DialogueManager").GetComponent<DialogueManager>();
         mainCamera = transform.GetChild(0).gameObject;
         mapCamera = transform.GetChild(1).gameObject;
@@ -65,6 +69,7 @@ public class Player : MonoBehaviour
             case Play:
                 PlayerMove();
                 Interaction_Check();
+                Collection_Check();
                 Map_Check();
                 break;
             case Interaction:
@@ -72,6 +77,9 @@ public class Player : MonoBehaviour
                 break;
             case Map:
                 Map_Active();
+                break;
+            case Collection:
+                Collection_Active();
                 break;
         }
     }
@@ -105,9 +113,14 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
             if (canInteraction)
             {
-                status = Interaction;
+                if (collection.Id_Check(colliderObj) == 1 && colliderObj.GetComponent<InterectiveObject>().isDestructible)
+                {
+                    colliderObj.SetActive(false);
+                    return;
+                }
                 move.x = 0;
-                dialogue.Action(coliider);
+                status = Interaction;
+                dialogue.Action(colliderObj);
             }
         if (Input.GetKeyDown(KeyCode.L))
         {
@@ -122,9 +135,25 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            dialogue.Action(coliider);
+            dialogue.Action(colliderObj);
             if (dialogue.isActive == false)
                 status = Play;
+        }
+    }
+    void Collection_Check()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            status = Collection;
+            CollectionPanel.SetActive(true);
+        }
+    }
+    void Collection_Active()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            status = Play;
+            CollectionPanel.SetActive(false);
         }
     }
     void Map_Check()

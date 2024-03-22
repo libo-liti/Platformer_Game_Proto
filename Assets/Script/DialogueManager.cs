@@ -11,12 +11,15 @@ public class DialogueManager : MonoBehaviour
     const int Mask = 10;
     const int Pink = 11;
     const int Virtual = 12;
+    const int Iceball = 101;
     public Text text;
     public GameObject bubble;       // Canvas of dialogue
     List<Dictionary<string, object>> data;
     List<object> maskDialogue;
     List<object> pinkDialogue;
     List<object> virtualDialogue;
+    List<object> iceballDialogue;
+
     public string language;
     public int dialogueIndex;
     public bool isActive = false;
@@ -26,10 +29,11 @@ public class DialogueManager : MonoBehaviour
         maskDialogue = new List<object>();
         pinkDialogue = new List<object>();
         virtualDialogue = new List<object>();
+        iceballDialogue = new List<object>();
     }
     void Start()
     {
-        data = CSVReader.Read("csvTest");
+        data = CSVReader.Read("Dialogue");
         InsertDialogue();
     }
     public void InsertDialogue()
@@ -37,6 +41,7 @@ public class DialogueManager : MonoBehaviour
         maskDialogue.Clear();
         pinkDialogue.Clear();
         virtualDialogue.Clear();
+        iceballDialogue.Clear();
         if (language == "korea")
         {
             for (int i = 0; i < data.Count; i++)
@@ -53,6 +58,9 @@ public class DialogueManager : MonoBehaviour
                         break;
                     case Virtual:
                         virtualDialogue.Add(data[i]["text"]);
+                        break;
+                    case Iceball:
+                        iceballDialogue.Add(data[i]["text"]);
                         break;
                 }
             }
@@ -74,21 +82,26 @@ public class DialogueManager : MonoBehaviour
                     case Virtual:
                         virtualDialogue.Add(data[i]["text"]);
                         break;
+                    case Iceball:
+                        iceballDialogue.Add(data[i]["text"]);
+                        break;
                 }
             }
         }
     }
     public void Action(GameObject obj)
     {
-        NPC npc = obj.GetComponent<NPC>();
-        Talk(npc.id);
+        InterectiveObject interectiveObject = obj.GetComponent<InterectiveObject>();
+        Talk(interectiveObject.id, obj);
         bubble.SetActive(isActive);
     }
-    void Talk(int id)
+    void Talk(int id, GameObject obj)
     {
         string dialogueData = GetDialogue(id, dialogueIndex);
         if (dialogueData == null)
         {
+            if (obj.GetComponent<InterectiveObject>().isDestructible)
+                obj.SetActive(false);
             isActive = false;
             dialogueIndex = 0;
             return;
@@ -113,6 +126,10 @@ public class DialogueManager : MonoBehaviour
                 if (virtualDialogue.Count == dialogueIndex)
                     return null;
                 return $"{virtualDialogue[dialogueIndex]}";
+            case Iceball:
+                if (iceballDialogue.Count == dialogueIndex)
+                    return null;
+                return $"{iceballDialogue[dialogueIndex]}";
         }
         return null;
     }

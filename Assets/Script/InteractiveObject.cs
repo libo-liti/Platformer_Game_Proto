@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NPC : MonoBehaviour
+public class InterectiveObject : MonoBehaviour
 {
     GameObject UICanvas;
     Player player;
     public int id;
+    public bool isNPC;
+    public bool isDestructible;
     void Start()
     {
         UICanvas = transform.GetChild(0).gameObject;
@@ -18,12 +20,12 @@ public class NPC : MonoBehaviour
         {
             UICanvas.SetActive(true);
             player.canInteraction = true;
-            player.coliider = gameObject;
+            player.colliderObj = gameObject;
         }
     }
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.tag == "Player" && isNPC)
         {
             // Look at the player
             if (transform.position.x - other.transform.position.x < 0)
@@ -38,7 +40,7 @@ public class NPC : MonoBehaviour
         {
             UICanvas.SetActive(false);
             player.canInteraction = false;
-            player.coliider = null;
+            player.colliderObj = null;
         }
     }
 }
